@@ -1,0 +1,28 @@
+{
+  "name": "my-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch:tailwind": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "watch:server": "nodemon app.js",
+    "devnode": "concurrently \"npm run watch:tailwind\" \"npm run watch:server\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "express": "^5.2.1",
+    "fs": "^0.0.1-security",
+    "mongoose": "^9.7.4",
+    "nodemon": "^3.1.14",
+    "path": "^0.12.7",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
