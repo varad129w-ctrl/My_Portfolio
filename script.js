@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---------------------------------------------------------
-    // 6. Interactive Contact Form Submission Handler
+    // 6. Interactive Contact Form Submission Handler (Web3Forms)
     // ---------------------------------------------------------
     const contactForm = document.getElementById('contactForm');
     const formFeedback = document.getElementById('formFeedback');
@@ -160,6 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('email').value.trim();
             const subject = document.getElementById('subject').value.trim();
             const message = document.getElementById('message').value.trim();
+            const keyInput = document.getElementById('web3formsKey');
+            const accessKey = (keyInput && keyInput.value.trim()) ? keyInput.value.trim() : "bb538033-ec38-46c5-9935-15f83d3072d2";
 
             if (!name || !email || !subject || !message) {
                 showFeedback("Please fill out all fields.", "error");
@@ -173,23 +175,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // Try sending to the Express API endpoint
-                const response = await fetch('/api/contact', {
+                const response = await fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, subject, message })
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        access_key: accessKey,
+                        name: name,
+                        email: email,
+                        subject: `[Portfolio Inquiry] ${subject}`,
+                        message: message,
+                        from_name: `${name} (Portfolio Inquiry)`
+                    })
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (result.success) {
                     showFeedback(`Thank you ${name}! Your message has been sent successfully. Varad will reach out soon.`, "success");
                     contactForm.reset();
                 } else {
-                    throw new Error("Server response not ok");
+                    throw new Error(result.message || "Failed to send message. Please try again.");
                 }
             } catch (err) {
-                // Friendly fallback for static testing or direct client mailing
-                showFeedback(`Thank you ${name}! Message logged. You can also directly reach Varad at gorek.dd25.ec@nitp.ac.in.`, "success");
-                contactForm.reset();
+                showFeedback(err.message || "Failed to send message. You can directly reach Varad at varad.129w@gmail.com.", "error");
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
